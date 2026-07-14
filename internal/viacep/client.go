@@ -13,6 +13,7 @@ var (
 
 type response struct {
 	Localidade string          `json:"localidade"`
+	UF         string          `json:"uf"`
 	Erro       json.RawMessage `json:"erro"`
 }
 
@@ -40,16 +41,19 @@ func (c *Client) GetCity(cep string) (string, error) {
 
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
+		fmt.Printf("viacep request failed: url=%s err=%v\n", url, err)
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusBadRequest {
+		fmt.Printf("viacep returned bad request: url=%s status=%d\n", url, resp.StatusCode)
 		return "", ErrCEPNotFound
 	}
 
 	var result response
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		fmt.Printf("viacep decode failed: url=%s err=%v\n", url, err)
 		return "", err
 	}
 
@@ -58,5 +62,5 @@ func (c *Client) GetCity(cep string) (string, error) {
 		return "", ErrCEPNotFound
 	}
 
-	return result.Localidade, nil
+	return fmt.Sprintf("%s, %s", result.Localidade, result.UF), nil
 }

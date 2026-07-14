@@ -39,3 +39,22 @@ func TestGetCurrentTemp_APIError(t *testing.T) {
 		t.Fatal("expected error, got nil")
 	}
 }
+
+func TestGetCurrentTemp_NormalizesAccentedLocation(t *testing.T) {
+	var gotQuery string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotQuery = r.URL.Query().Get("q")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"current":{"temp_c":18.2}}`))
+	}))
+	defer server.Close()
+
+	client := weatherapi.NewClientWithBaseURL(server.URL, "test-key")
+	_, err := client.GetCurrentTemp("Arujá, SP")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	if gotQuery != "Aruja, SP" {
+		t.Fatalf("expected normalized query to be %q, got %q", "Aruja, SP", gotQuery)
+	}
+}
