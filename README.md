@@ -4,13 +4,11 @@ A Go service that receives a Brazilian ZIP code (CEP), looks up the correspondin
 
 ## Live URL (Google Cloud Run)
 
-> **To be filled in after deployment.**
->
-> Once deployed, test the endpoint with:
->
-> ```
-> https://<service>-<hash>-<region>.a.run.app/weather?cep=01310100
-> ```
+Use this deployed endpoint:
+
+```text
+https://weather-api-cep-full-cycle-264412937559.region.run.app/weather?cep=01310100
+```
 
 ---
 
