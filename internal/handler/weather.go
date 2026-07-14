@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"math"
 	"net/http"
 	"regexp"
 
@@ -64,9 +65,9 @@ func (h *WeatherHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := WeatherResponse{
-		TempC: tempC,
-		TempF: celsiusToFahrenheit(tempC),
-		TempK: celsiusToKelvin(tempC),
+		TempC: roundToTwoDecimals(tempC),
+		TempF: roundToTwoDecimals(celsiusToFahrenheit(tempC)),
+		TempK: roundToTwoDecimals(celsiusToKelvin(tempC)),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -79,4 +80,8 @@ func celsiusToFahrenheit(c float64) float64 {
 
 func celsiusToKelvin(c float64) float64 {
 	return c + 273
+}
+
+func roundToTwoDecimals(value float64) float64 {
+	return math.Round(value*100) / 100
 }
